@@ -7,8 +7,7 @@ def LoadHost(PathForExecute):
         with open(PathForExecute, 'r') as file:
             data = json.load(file)
     except json.JSONDecodeError as e:
-        print("Invalid JSON syntax:", e)
-        sys.exit(1)
+        sys.exit(f"Invalid JSON syntax: {e}")
     except FileNotFoundError:
         sys.exit("File Not Found, 'Host Archive Is Needed'")
 
@@ -18,14 +17,16 @@ def LoadHost(PathForExecute):
     elif data == []:
         sys.exit("Empty List")
 
+    ProblemsData = []
     RequestForHost = ['ip', 'username', 'KeyPath']
-    for x in data:
-        for i in RequestForHost:
-            if i in x:
-               print(i, x['ip'], x['username'])
+    for host in data:
+        for parameter in RequestForHost:
+            if parameter not in host:
+                ErrorCatched = f"Não Foi Possível Concluir O Programa Pois Falta O Parâmetro: {parameter} No Host: {host} Para Prosseguir"
+                ProblemsData.append(ErrorCatched)
+    if len(ProblemsData) > 0:
+        print(ProblemsData)
+        sys.exit(1)
+    return data
 
-
-
-def Main():
-     LoadHost('host.json')
-Main()
+async def RunFromHost(Command):
